@@ -1,0 +1,23 @@
+[user]
+	name = Richard Buchmann
+    email = 
+#[credential]
+#        helper = store
+[pull]
+	rebase = false
+[color]
+	ui = auto
+[push]
+	default = simple
+[core]
+    #hooksPath = 
+[init]
+	templatedir = /home/rbuchmann/git-hooks/client/
+[alias]
+         la = log --all --graph --color --name-status --format='%C(yellow)%h%Creset %cr %C(blue)%cn%Creset -%C(auto)%d%Creset %s'
+         graph = log --graph --full-history --all --pretty=format:"%h%x09%d%x20%s"
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
