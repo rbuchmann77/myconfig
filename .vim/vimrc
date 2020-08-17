@@ -1,3 +1,4 @@
+" spaces instead tabs: https://softwareengineering.stackexchange.com/questions/57/tabs-versus-spaces-what-is-the-proper-indentation-character-for-everything-in-e#:~:text=Use%20tabs%20to%20indent%20the%20start%20of%20the%20line%2C%20one,up%20regardless%20of%20tab%20size.
 set tabstop=4 shiftwidth=4 expandtab
 
 set nocompatible              " be iMproved, required
@@ -17,6 +18,8 @@ Plugin 'itchyny/lightline.vim'
 Plugin 'godlygeek/tabular'
 Plugin 'plasticboy/vim-markdown'
 Plugin 'tpope/vim-fugitive'
+Plugin 'peterhoeg/vim-qml'
+Plugin 'airblade/vim-gitgutter'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
