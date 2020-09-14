@@ -1,5 +1,6 @@
 " spaces instead tabs: https://softwareengineering.stackexchange.com/questions/57/tabs-versus-spaces-what-is-the-proper-indentation-character-for-everything-in-e#:~:text=Use%20tabs%20to%20indent%20the%20start%20of%20the%20line%2C%20one,up%20regardless%20of%20tab%20size.
 set tabstop=4 shiftwidth=4 expandtab
+set showmatch
 
 set nocompatible              " be iMproved, required
 filetype off                  " required
@@ -13,14 +14,23 @@ call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 
+" Checkers
 Plugin 'dense-analysis/ale'
+Plugin 'rhysd/vim-grammarous'
+
+" Beautifulers
 Plugin 'itchyny/lightline.vim'
 Plugin 'godlygeek/tabular'
 Plugin 'plasticboy/vim-markdown'
-Plugin 'tpope/vim-fugitive'
 Plugin 'peterhoeg/vim-qml'
-Plugin 'airblade/vim-gitgutter'
 Plugin 'asciidoc/vim-asciidoc'
+Plugin 'pangloss/vim-javascript'
+Plugin 'joereynolds/sql-lint'
+Plugin 'frazrepo/vim-rainbow'
+
+" Versionning
+Plugin 'tpope/vim-fugitive'
+Plugin 'airblade/vim-gitgutter'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -40,4 +50,15 @@ filetype plugin indent on    " required
 " """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " NRB: TO RELOAD configuration file, type:
 "      :so ~/.vim/vimrc
+"
+"      Don't forget to execute sometimes:
+"      :PluginUpdate
+"
+"      Make sure to install tools:
+"      sudo apt install python3-bashate pip3 cppcheck clang clang-tidy
+"      python3 -m pip install cpplint
 " """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+let g:grammarous#default_comments_only_filetypes = {
+            \ '*' : 1, 'help' : 0, 'markdown' : 0,
+            \ }
