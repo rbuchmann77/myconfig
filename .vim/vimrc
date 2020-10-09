@@ -78,6 +78,9 @@ endtry
 
 set background=dark
 
+au FileType c,cpp,objc,objcpp call rainbow#load()
+let g:rainbow_active = 1
+
 let g:markdown_folding = 1
 set nofoldenable
 
