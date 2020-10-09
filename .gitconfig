@@ -1,7 +1,8 @@
 [user]
-	name = Richard Buchmann
-    email = 
-#[credential]
+	name =
+        email =
+[credential]
+#        username=rbuchmann@free.fr
 #        helper = store
 [pull]
 	rebase = false
@@ -10,7 +11,7 @@
 [push]
 	default = simple
 [core]
-    #hooksPath = 
+    #hooksPath =
 [init]
 	templatedir = /home/rbuchmann/git-hooks/client/
 [alias]
@@ -21,3 +22,7 @@
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
+
+[gui]
+	fontui = -family \"DejaVu Sans\" -size 10 -weight normal -slant roman -underline 0 -overstrike 0
+	fontdiff = -family \"DejaVu Sans Mono\" -size 10 -weight normal -slant roman -underline 0 -overstrike 0

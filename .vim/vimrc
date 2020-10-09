@@ -1,10 +1,17 @@
-" spaces instead tabs: https://softwareengineering.stackexchange.com/questions/57/tabs-versus-spaces-what-is-the-proper-indentation-character-for-everything-in-e#:~:text=Use%20tabs%20to%20indent%20the%20start%20of%20the%20line%2C%20one,up%20regardless%20of%20tab%20size.
-set tabstop=4 shiftwidth=4 expandtab
-set showmatch
+" """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" NRB: TO RELOAD configuration file, type:
+"      :so ~/.vim/vimrc
+"
+"      Make sure to install tools:
+"      sudo apt install python3-bashate pip3 cppcheck clang clang-tidy
+"      python3 -m pip install cpplint
+"
+"      Don't forget to execute sometimes:
+"      :PluginUpdate
+"
+" """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-set nocompatible              " be iMproved, required
-filetype off                  " required
-
+""""""" PLUGINS
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
@@ -17,6 +24,8 @@ Plugin 'VundleVim/Vundle.vim'
 " Checkers
 Plugin 'dense-analysis/ale'
 Plugin 'rhysd/vim-grammarous'
+Plugin 'Vimjas/vim-python-pep8-indent'
+Plugin 'joereynolds/sql-lint'
 
 " Beautifulers
 Plugin 'itchyny/lightline.vim'
@@ -25,12 +34,15 @@ Plugin 'plasticboy/vim-markdown'
 Plugin 'peterhoeg/vim-qml'
 Plugin 'asciidoc/vim-asciidoc'
 Plugin 'pangloss/vim-javascript'
-Plugin 'joereynolds/sql-lint'
 Plugin 'frazrepo/vim-rainbow'
+Plugin 'vim-scripts/peaksea'
 
 " Versionning
 Plugin 'tpope/vim-fugitive'
 Plugin 'airblade/vim-gitgutter'
+
+" Tools
+Plugin 'vim-scripts/YankRing.vim'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -47,18 +59,91 @@ filetype plugin indent on    " required
 " see :h vundle for more details or wiki for FAQ
 " Put your non-Plugin stuff after this line
 "
-" """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" NRB: TO RELOAD configuration file, type:
-"      :so ~/.vim/vimrc
-"
-"      Don't forget to execute sometimes:
-"      :PluginUpdate
-"
-"      Make sure to install tools:
-"      sudo apt install python3-bashate pip3 cppcheck clang clang-tidy
-"      python3 -m pip install cpplint
-" """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 let g:grammarous#default_comments_only_filetypes = {
             \ '*' : 1, 'help' : 0, 'markdown' : 0,
             \ }
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => GUI related
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" dark theme
+"colorscheme desert
+
+try
+    colorscheme peaksea
+catch
+    colorscheme desert
+endtry
+
+set background=dark
+
+let g:markdown_folding = 1
+set nofoldenable
+
+" Cursori (#F0E68C)
+highlight Cursor guifg=black guibg=#F0E68C
+
+" Cursor line
+highlight CursorLine guibg=#242424 gui=none
+"
+augroup CursorLine
+  au!
+  au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
+  au WinLeave * setlocal nocursorline
+augroup END
+
+" surligne resultat de recherche
+set hlsearch
+
+" Show matching brackets when text indicator is over them
+set showmatch
+
+" Always show the status line
+set laststatus=2
+
+" Set font according to system
+if has("mac") || has("macunix")
+    set gfn=IBM\ Plex\ Mono:h14,Hack:h14,Source\ Code\ Pro:h15,Menlo:h15
+elseif has("win16") || has("win32")
+    set gfn=IBM\ Plex\ Mono:h14,Source\ Code\ Pro:h12,Bitstream\ Vera\ Sans\ Mono:h11
+elseif has("gui_gtk2")
+    set gfn=IBM\ Plex\ Mono:h14,:Hack\ 14,Source\ Code\ Pro\ 12,Bitstream\ Vera\ Sans\ Mono\ 11
+elseif has("linux")
+    set gfn=IBM\ Plex\ Mono:h14,:Hack\ 14,Source\ Code\ Pro\ 12,Bitstream\ Vera\ Sans\ Mono\ 11
+elseif has("unix")
+    set gfn=Monospace\ 11
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => EDITING related
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" With a map leader it's possible to do extra key combinations
+" like <leader>w saves the current file
+let mapleader = ","
+
+" Set utf8 as standard encoding and en_US as the standard language
+set encoding=utf8
+
+" spaces instead tabs: https://softwareengineering.stackexchange.com/questions/57/tabs-versus-spaces-what-is-the-proper-indentation-character-for-everything-in-e#:~:text=Use%20tabs%20to%20indent%20the%20start%20of%20the%20line%2C%20one,up%20regardless%20of%20tab%20size.
+set tabstop=4 shiftwidth=4 expandtab
+
+set nocompatible              " be iMproved, required
+filetype off                  " required
+
+" autocompletion
+set wildmenu
+set wildmode=longest:list,full
+
+" alias, tags enter with 't'
+map t <C-]>
+
+" set E to Explore
+cabbrev E Explore
+
+" yankring
+"     1) Press F11 and choose your buffer id
+"     2) To paste this buffer: "<id>p
+"         for example: "2p
+nnoremap <silent> <F11> :YRShow<CR>
