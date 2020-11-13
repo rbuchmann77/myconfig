@@ -3,11 +3,23 @@
 "      :so ~/.vim/vimrc
 "
 "      Make sure to install tools:
-"      sudo apt install python3-bashate pip3 cppcheck clang clang-tidy
+"      sudo apt install python3-bashate pip3 # for bash
+"      sudo apt install cppcheck clang clang-tidy                  # for C/C++
+"      sudo apt install flake8 pyflakes pycodestyle mypy pylint3   # for python
 "      python3 -m pip install cpplint
 "
 "      Don't forget to execute sometimes:
 "      :PluginUpdate
+"
+"      sudo ~/.vim/bundle/nerd-fonts/install.sh
+"
+"      To profile vim:
+"      :profile start profile.log
+"      :profile func *
+"      :profile file *
+"      " At this point do slow actions
+"      :profile pause
+"      :noautocmd qall!
 "
 " """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -21,34 +33,46 @@ call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 
+" Theme
+" Plugin 'vim-scripts/peaksea'
+Plugin 'tomasr/molokai'
+
 " Checkers
 Plugin 'dense-analysis/ale'
 Plugin 'rhysd/vim-grammarous'
-Plugin 'Vimjas/vim-python-pep8-indent'
 Plugin 'joereynolds/sql-lint'
 
+
+" Tools
+Plugin 'vim-scripts/YankRing.vim'      " clipboard
+Plugin 'preservim/nerdtree'            " file browser
+Plugin 'Vimjas/vim-python-pep8-indent' " indentation behavior
+
+" Versionning
+Plugin 'tpope/vim-fugitive'
+Plugin 'airblade/vim-gitgutter'
+
 " Beautifulers
-Plugin 'itchyny/lightline.vim'
+Plugin 'itchyny/lightline.vim' " statusline / status bar
+" Plugin 'maximbaz/lightline-ale'
 Plugin 'godlygeek/tabular'
 Plugin 'plasticboy/vim-markdown'
 Plugin 'peterhoeg/vim-qml'
 Plugin 'asciidoc/vim-asciidoc'
 Plugin 'pangloss/vim-javascript'
 Plugin 'frazrepo/vim-rainbow'
-Plugin 'vim-scripts/peaksea'
-
-" Versionning
-Plugin 'tpope/vim-fugitive'
-Plugin 'airblade/vim-gitgutter'
-
-" Tools
-Plugin 'vim-scripts/YankRing.vim'
+Plugin 'ryanoasis/nerd-fonts'
+Plugin 'tiagofumo/vim-nerdtree-syntax-highlight'
+Plugin 'ryanoasis/vim-devicons' " doc said put this as last plugin.
+                                " devicons is really long to install.
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
+
 filetype plugin indent on    " required
 " To ignore plugin indent changes, instead use:
 "filetype plugin on
+
 "
 " Brief help
 " :PluginList       - lists configured plugins
@@ -67,43 +91,32 @@ let g:grammarous#default_comments_only_filetypes = {
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => GUI related
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" dark theme
-"colorscheme desert
+
+set syntax=enable
 
 try
-    colorscheme peaksea
+    colorscheme molokai
+    " colorscheme peaksea
 catch
     colorscheme desert
 endtry
 
 set background=dark
 
-au FileType c,cpp,objc,objcpp call rainbow#load()
-let g:rainbow_active = 1
-
 let g:markdown_folding = 1
 set nofoldenable
 
-" Cursori (#F0E68C)
-highlight Cursor guifg=black guibg=#F0E68C
-
-" Cursor line
-highlight CursorLine guibg=#242424 gui=none
+"" Cursor (#F0E68C)
+"highlight Cursor guifg=black guibg=#F0E68C
 "
+"" Cursor line
+"highlight CursorLine guibg=#242424 gui=none
+
 augroup CursorLine
   au!
   au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
   au WinLeave * setlocal nocursorline
 augroup END
-
-" surligne resultat de recherche
-set hlsearch
-
-" Show matching brackets when text indicator is over them
-set showmatch
-
-" Always show the status line
-set laststatus=2
 
 " Set font according to system
 if has("mac") || has("macunix")
@@ -118,13 +131,31 @@ elseif has("unix")
     set gfn=Monospace\ 11
 endif
 
+" ?
+set incsearch
+
+" surligne resultat de recherche
+set hlsearch
+
+" Show matching brackets when text indicator is over them
+set showmatch
+
+" Always show the status line
+set laststatus=2
+
+" syntax highlighting
+syntax on
+filetype on
+filetype indent on
+filetype plugin on
+
+au FileType c,cpp,objc,objcpp,h,hpp call rainbow#load() " rainbow parenthesis is overwritten somewhere :'(
+let g:rainbow_active = 1
+" call rainbow#load()
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => EDITING related
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-" With a map leader it's possible to do extra key combinations
-" like <leader>w saves the current file
-let mapleader = ","
 
 " Set utf8 as standard encoding and en_US as the standard language
 set encoding=utf8
@@ -133,20 +164,105 @@ set encoding=utf8
 set tabstop=4 shiftwidth=4 expandtab
 
 set nocompatible              " be iMproved, required
-filetype off                  " required
+" filetype off                  " required
+set modelines=0               " prevent security exploits? https://alioth-lists-archive.debian.net/pipermail/pkg-vim-maintainers/2007-June/004020.html
 
 " autocompletion
 set wildmenu
 set wildmode=longest:list,full
 
-" alias, tags enter with 't'
-map t <C-]>
+" This turns off Vim's crazy default regex characters and makes searches use normal regexes.
+nnoremap / /\v
+vnoremap / /\v
 
-" set E to Explore
-cabbrev E Explore
+""" NERDTree
+" open a NERDTree automatically when vim starts up if no files were specified
+let NERDTreeHighlightCursorline = 0 " to fix slowness
+set lazyredraw " to fix slowness
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 
-" yankring
+" open NERDTree automatically when vim starts up on opening a directory
+autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | exe 'cd '.argv()[0] | endif
+
+autocmd FileType nerdtree setlocal nolist
+
+" Nice icons in NERDTree given file type.
+if exists("g:loaded_webdevicons")
+  call webdevicons#refresh()
+endif
+
+""" ALE config
+
+let g:ale_enabled = 1
+let g:ale_completion_enabled = 0
+let g:ale_lint_delay = 200   " millisecs
+" let g:ale_lint_on_text_changed = 'always'  " never/insert/normal/always
+let g:ale_lint_on_enter = 1
+let g:ale_lint_on_filetype_changed = 1
+let g:ale_lint_on_save = 1
+let g:ale_fix_on_save = 1
+let g:ale_set_loclist = 0
+let g:ale_set_quickfix = 1
+" let g:ale_open_list = 1
+let g:ale_sign_error = '●'
+let g:ale_sign_warning = '.'
+let g:ale_python_pylint_executable = 'pylint3'
+
+function! LinterStatus() abort
+    let l:counts = ale#statusline#Count(bufnr(''))
+
+    let l:all_errors = l:counts.error + l:counts.style_error
+    let l:all_non_errors = l:counts.total - l:all_errors
+
+    return l:counts.total == 0 ? 'OK' : printf(
+    \   '%dW %dE',
+    \   all_non_errors,
+    \   all_errors
+    \)
+endfunction
+
+" add linter status to the status line. 0W 0E is the objective!
+let g:lightline = {
+            \    'colorscheme': 'solarized light',
+            \    'active': {
+            \        'left': [
+            \            [ 'mode', 'paste' ],
+            \            [ 'readonly', 'filename', 'modified', 'linter' ]
+            \        ] },
+            \    'component': {
+            \        'linter': '%{LinterStatus()}'
+            \    },
+            \ }
+
+let &l:equalprg = 'cmake-format -'
+
+
+""" Perf
+set updatetime=1000             " Speed up the updatetime so gitgutter and friends are quicker
+let g:NERDTreeLimitedSyntax = 1 " Mitigating lag issues
+
+""" yankring
 "     1) Press F11 and choose your buffer id
 "     2) To paste this buffer: "<id>p
 "         for example: "2p
-nnoremap <silent> <F11> :YRShow<CR>
+
+""" keyboard mapping
+
+" With a map leader it's possible to do extra key combinations
+let mapleader = ","
+
+nnoremap <silent> <F2> :ALENextWrap<CR>     " next warning/error
+nnoremap <silent> <F3> :GitGutterBufferToggle<CR>:ALEToggle<CR> " remove left margin to easy copy/paste
+nnoremap <silent> <F11> :YRShow<CR>         " show clipboards
+
+" :nnoremap <F9> :NERDTree<cr>:normal P<cr>:normal O<cr>
+nnoremap <silent> <F12> :NERDTreeToggle<CR> " file browser, everything unfold
+" nnoremap <silent> <F12> :NERDTreeToggle<CR>:normal P<CR>:normal O<CR> " file browser, everything unfold
+"
+"
+" nnoremap <leader><F12> :NERDTree<CR>:normal P<CR>:normal O<CR> " file browser, everything unfold
+
+" :nnoremap <F9> :NERDTree<cr>:normal P<cr>:normal O<cr>
+nnoremap <leader>W :%s/\s\+$//<cr>:let @/=''<CR> " strip all trailing whitespace in the current file
+nnoremap <leader>a :Ack

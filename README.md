@@ -3,12 +3,13 @@ My config
 
 This repository includes:
 - VIM config
-    checkers for Qt/bash/english/python...
-    syntax highlighting for markdown, qml, asciidoc, javascript...
+    checkers for c++/bash/english/python...
+    syntax highlighting for C/C++, qml, bash, markdown, qml, asciidoc, javascript...
     UI: theme, line highlighting, status bar
-    git status
+    git status on left bar (F3)
     rainbow parenthesis
     yank ring (F11)
+    file browser (NERDTree) (F12)
 - bash config
     setTermTitle: rename terminal (default: current directory name)
     color prompt: green/red given last exit status
@@ -20,6 +21,7 @@ This repository includes:
 - gdb config
     helpers for Qt and stl
     demangle
+    powerful dashboard
 
 
 Installation
@@ -39,7 +41,7 @@ cd ~/
 .. warning:: define your own user/email in:
    ``.gitconfig``
 
-Read installation steps from vimrc.
+Read installation steps from my vimrc.
 
 TODO
 ----

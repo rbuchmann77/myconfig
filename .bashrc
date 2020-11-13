@@ -6,9 +6,19 @@ export PS1='`if [[ $? = 0 ]]; then echo \[\033[32m\]; else echo \[\033[31m\]; fi
 
 setTermTitle() {
     TITLE="$*"
+    #if [ "${USER}" != "$(stat -c "%U" ~/.bashrc)" ] ; then
+    #fi
+
+    if [ -z "${TITLE}" ] ; then
+        TITLE="$(pwd | xargs basename)"
+    fi
+
     PROMPT_COMMAND='echo -ne "\033]0; ${TITLE} \007"'
 }
 
 setTermTitle "$(pwd -P | xargs basename)"
 
+export PATH=${PATH}:~/.local/bin # for python modules installed from pip3
+
 export LESS=-R
+alias open='xdg-open'
