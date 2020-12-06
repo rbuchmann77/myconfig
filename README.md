@@ -28,7 +28,7 @@ Installation
 ------------
 
 git clone https://github.com/cyrus-and/gdb-dashboard.git
-cp gdb-dashboard.git/.gdbinit ~/
+cp gdb-dashboard/.gdbinit ~/
 
 ./sync.sh
 
