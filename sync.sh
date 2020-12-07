@@ -2,11 +2,9 @@
 
 SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}" | xargs readlink -f)"
 
-function errexit() {
-  local err=$?
-  local code="${1:-1}"
-  echo "Error in ${BASH_SOURCE[1]}:${BASH_LINENO[0]}. '${BASH_COMMAND}' exited with status $err"
-  exit "${code}"
+function err_report {
+    >&2 echo "ERROR on line $(caller)"
+    exit 1
 }
 
 function bootstrap {
@@ -30,7 +28,7 @@ function sync {
              .gdbinit.d/init \
              .gdbinit.d/initQt \
              .gdbinit.d/initStl \
-             ; do
+            ; do
         DIR=$(dirname ~/${f} | xargs readlink -f)
         mkdir -p "${DIR}"
         touch "${HOME}/${f}"
@@ -41,8 +39,7 @@ function sync {
 }
 
 function main {
-    trap 'errexit' ERR
-    set -o errtrace
+    trap 'err_report' ERR
 
     bootstrap
     setup
