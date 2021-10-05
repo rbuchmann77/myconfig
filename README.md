@@ -27,16 +27,7 @@ This repository includes:
 Installation
 ------------
 
-git clone https://github.com/cyrus-and/gdb-dashboard.git
-cp gdb-dashboard/.gdbinit ~/
-
 ./sync.sh
-
-cd ~/.gdb
-svn checkout svn://gcc.gnu.org/svn/gcc/trunk/libstdc++-v3/python stlPrettyPrinter
-git clone https://github.com/Lekensteyn/qt5printers.git
-
-cd ~/
 
 .. warning:: define your own user/email in:
    ``.gitconfig``

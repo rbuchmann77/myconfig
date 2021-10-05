@@ -7,7 +7,7 @@
 "
 "      Make sure to install tools:
 "      sudo apt install python3-bashate python3-pip                # for bash
-"      sudo apt install cppcheck clang clang-tidy                  # for C/C++
+"      sudo apt install cppcheck clang clangd clang-tidy           # for C/C++
 "      sudo apt install flake8 pyflakes pycodestyle mypy pylint3   # for python
 "      python3 -m pip install cpplint systemdlint -U               # for systemd
 "

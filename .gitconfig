@@ -12,8 +12,8 @@
 	default = simple
 [core]
     #hooksPath =
-[init]
-	templatedir = /home/rbuchmann/git-hooks/client/
+# [init]
+# 	templatedir = /home/rbuchmann/git-hooks/client/
 [alias]
          la = log --all --graph --color --name-status --format='%C(yellow)%h%Creset %cr %C(blue)%cn%Creset -%C(auto)%d%Creset %s'
          graph = log --graph --full-history --all --pretty=format:"%h%x09%d%x20%s"

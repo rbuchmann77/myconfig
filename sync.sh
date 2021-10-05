@@ -12,19 +12,36 @@ function bootstrap {
         return
     fi
 
-    sudo apt-get install -y meld subversion
+    sudo apt-get install -y meld subversion undistract-me
 }
 
 function setup {
     mkdir -p ~/.vim/
     mkdir -p ~/.gdb
     mkdir -p ~/.gdbinit.d
+
+    if ! [ -d ~/.vim/bundle/Vundle.vim ] ; then
+        git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+    fi
+
+    if ! [ -d ~/.gdb/stlPrettyPrinter ] ; then
+        pushd ~/.gdb >& /dev/null
+        svn checkout svn://gcc.gnu.org/svn/gcc/trunk/libstdc++-v3/python stlPrettyPrinter
+        popd >& /dev/null
+    fi
+
+    if ! [ -d ~/.gdb/qt5printers.git ] ; then
+        pushd ~/.gdb >& /dev/null
+        git clone https://github.com/Lekensteyn/qt5printers.git
+        popd >& /dev/null
+    fi
 }
 
 function sync {
     for f in \
              .vim/vimrc \
              .gitconfig \
+             .gdbinit \
              .gdbinit.d/init \
              .gdbinit.d/initQt \
              .gdbinit.d/initStl \

@@ -62,3 +62,5 @@ export PATH=${PATH}:~/.local/bin # for python modules installed from pip3
 
 export LESS=-R
 alias open='xdg-open'
+
+source /etc/profile.d/undistract-me.sh
