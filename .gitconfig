@@ -12,8 +12,6 @@
 	default = simple
 [core]
     #hooksPath =
-# [init]
-# 	templatedir = /home/rbuchmann/git-hooks/client/
 [alias]
          la = log --all --graph --color --name-status --format='%C(yellow)%h%Creset %cr %C(blue)%cn%Creset -%C(auto)%d%Creset %s'
          graph = log --graph --full-history --all --pretty=format:"%h%x09%d%x20%s"
@@ -29,3 +27,7 @@
 
 [status]
 	submoduleSummary = true
+[pager]
+	branch = false
+# Useful command:
+# git config --global pager.branch false  # to avoid Git branch command behaves like 'less'

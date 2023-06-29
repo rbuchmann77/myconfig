@@ -9,6 +9,8 @@
 "      sudo apt install python3-bashate python3-pip                # for bash
 "      sudo apt install cppcheck clang clangd clang-tidy           # for C/C++
 "      sudo apt install flake8 pyflakes pycodestyle mypy pylint3   # for python
+"      sudo apt install npm eslint                                 # for js
+"      sudo npm install -g jshint                                  # for js
 "      python3 -m pip install cpplint systemdlint -U               # for systemd
 "
 "      TO RELOAD configuration file, type:
@@ -46,30 +48,35 @@ Plugin 'VundleVim/Vundle.vim'
 " Theme
 " Plugin 'vim-scripts/peaksea'
 Plugin 'tomasr/molokai'
+" Plugin 'NLKNguyen/papercolor-theme'
+Plugin 'altercation/vim-colors-solarized'  " See https://vimcolorschemes.com/light/top
+" Plugin 'sainnhe/edge'
 
 " Checkers
 Plugin 'dense-analysis/ale'
 Plugin 'rhysd/vim-grammarous'
 Plugin 'joereynolds/sql-lint'
 
-
 " Tools
 Plugin 'vim-scripts/YankRing.vim'      " clipboard. CTRL-P after p!
-Plugin 'mhinz/vim-grepper'             " :GrepperGit text-to-search
-" Plugin 'preservim/nerdtree'            " file browser
+" Plugin 'mhinz/vim-grepper'             " :GrepperGit text-to-search
+" Plugin 'mileszs/ack.vim'               " :Ack [options] {pattern} [{directories}]
+" Plugin 'preservim/nerdtree'            " file browser (too slow)
 Plugin 'Vimjas/vim-python-pep8-indent' " indentation behavior
+Plugin 'godlygeek/tabular'      " auto-align helper while typing
 
 " Versionning
-Plugin 'tpope/vim-fugitive'     " add :Git diff ...
+Plugin 'tpope/vim-fugitive'     " add :Git, diff ...
 Plugin 'airblade/vim-gitgutter' " show diff
 
 " Beautifulers
 Plugin 'kergoth/vim-bitbake'     " coloring syntax
 Plugin 'plasticboy/vim-markdown' " coloring syntax
-Plugin 'peterhoeg/vim-qml'
+Plugin 'peterhoeg/vim-qml'       " coloring syntax
 Plugin 'asciidoc/vim-asciidoc'   " linter
 Plugin 'pangloss/vim-javascript' " linter
 Plugin 'frazrepo/vim-rainbow'    " rainbow colors for nested parenthesis
+Plugin 'mfukar/robotframework-vim'  " coloring syntax
 " => nerd is too slow
 " Plugin 'ryanoasis/nerd-fonts'  " do not forget: sudo ~/.vim/bundle/nerd-fonts/install.sh
 " Plugin 'tiagofumo/vim-nerdtree-syntax-highlight'
@@ -77,9 +84,21 @@ Plugin 'frazrepo/vim-rainbow'    " rainbow colors for nested parenthesis
 "                                 " devicons is really long to install.
 Plugin 'itchyny/lightline.vim' " statusline / status bar
 " Plugin 'maximbaz/lightline-ale'
-Plugin 'godlygeek/tabular'
 
-Plugin 'codota/tabnine-vim'
+Plugin 'martinda/Jenkinsfile-vim-syntax'
+" Plugin 'codota/tabnine-vim'  " performance problem?
+
+" Plugin 'junegunn/fzf.vim'
+" Plugin 'junegunn/fzf'
+
+" Plugin 'junegunn/vim-easy-align'  " type vipga / gaip=
+
+" Plugin 'francoiscabrol/ranger.vim'  " explorer
+" Plugin 'hut/ranger'
+"
+" Plugin 'hrsh7th/vim-vsnip'
+" Plugin 'hrsh7th/vim-vsnip-integ'
+" Plugin 'rafamadriz/friendly-snippets'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -109,14 +128,16 @@ let g:grammarous#default_comments_only_filetypes = {
 
 set syntax=enable
 
+" set background=dark  " Darkmode is wrong for eyes.
+set background=light
 try
-    colorscheme molokai
+    " colorscheme molokai  " dark mode
+    " colorscheme edge
+    " colorscheme solarized
     " colorscheme peaksea
 catch
     colorscheme desert
 endtry
-
-set background=dark
 
 let g:markdown_folding = 1
 set nofoldenable
@@ -169,6 +190,16 @@ au FileType c,cpp,objc,objcpp,h,hpp call rainbow#load() " rainbow parenthesis is
 let g:rainbow_active = 1
 " call rainbow#load()
 
+" let g:vsnip_filetypes.markdown = ['md']
+" let g:vsnip_filetypes.cpp = ['cpp', 'hpp']
+" let g:vsnip_filetypes.c = ['c', 'h']
+
+" NRB: highlighting after colorscheme lines!
+highlight WrongChar ctermbg=red guibg=red
+syntax match WrongChar "[^\u0000-\u007F]\|\s\+$" containedin=ALL
+
+" highlight NonAscii ctermbg=red guibg=red
+" syntax match WrongChar "[^\u0000-\u007F]"
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -184,6 +215,7 @@ set tabstop=4 shiftwidth=4 expandtab
 set nocompatible              " be iMproved, required
 " filetype off                  " required
 set modelines=0               " prevent security exploits? https://alioth-lists-archive.debian.net/pipermail/pkg-vim-maintainers/2007-June/004020.html
+" set number                    " show line numbers. SLOW!
 
 " autocompletion
 set wildmenu
@@ -193,10 +225,14 @@ set wildmode=longest:list,full
 " nnoremap / /\v
 " vnoremap / /\v
 
+set re=1 " Regex engine 1 feels smoother most of the times
+set ttimeoutlen=10 " Responsive escape
+set balloondelay=250 " Fast balloon popup.
+
 " """ NERDTree
 " " open a NERDTree automatically when vim starts up if no files were specified
 " let NERDTreeHighlightCursorline = 0 " to fix slowness
-" set lazyredraw " to fix slowness
+set lazyredraw " to fix slowness
 " autocmd StdinReadPre * let s:std_in=1
 " autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 "
@@ -210,8 +246,13 @@ set wildmode=longest:list,full
 "   call webdevicons#refresh()
 " endif
 
-""" ALE config
+""" vsnip
+" call dein#add('hrsh7th/vim-vsnip')
+" call dein#add('hrsh7th/vim-vsnip-integ')
+" imap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
+" smap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
 
+""" ALE config
 let g:ale_enabled = 1
 let g:ale_completion_enabled = 0
 let g:ale_lint_delay = 200   " millisecs
@@ -243,7 +284,6 @@ endfunction
 
 " add linter status to the status line. 0W 0E is the objective!
 let g:lightline = {
-            \    'colorscheme': 'solarized light',
             \    'active': {
             \        'left': [
             \            [ 'mode', 'paste' ],
@@ -258,7 +298,7 @@ let &l:equalprg = 'cmake-format -'
 
 
 """ Perf
-set updatetime=1000             " Speed up the updatetime so gitgutter and friends are quicker
+" set updatetime=1000             " Speed up the updatetime so gitgutter and friends are quicker
 " let g:NERDTreeLimitedSyntax = 1 " Mitigating lag issues
 
 """ yankring
@@ -266,13 +306,17 @@ set updatetime=1000             " Speed up the updatetime so gitgutter and frien
 "     2) To paste this buffer: "<id>p
 "         for example: "2p
 
+"""
+let g:ranger_replace_netrw = 1  " open ranger when vim open a directory
+
 """ keyboard mapping
 
 " With a map leader it's possible to do extra key combinations
 let mapleader = ","
 
 nnoremap <silent> <F2> :ALENextWrap<CR>     " next warning/error
-nnoremap <silent> <F3> :GitGutterBufferToggle<CR>:ALEToggle<CR> " remove left margin to easy copy/paste
+nnoremap <silent> <F3> :GitGutterBufferToggle<CR>:ALEToggle<CR>  " remove left margin to easy copy/paste
+nnoremap <silent> <F4> :set number!<CR>
 nnoremap <silent> <F11> :YRShow<CR>         " show clipboards
 
 " :nnoremap <F9> :NERDTree<cr>:normal P<cr>:normal O<cr>
@@ -286,3 +330,6 @@ nnoremap <silent> <F12> :NERDTreeToggle<CR> " file browser, everything unfold
 " :nnoremap <F9> :NERDTree<cr>:normal P<cr>:normal O<cr>
 nnoremap <leader>W :%s/\s\+$//<cr>:let @/=''<CR> " strip all trailing whitespace in the current file
 nnoremap <leader>a :Ack
+
+nnoremap <expr> <C-J> &diff ? ']c' : '<C-W>j'  " previous difference or window
+nnoremap <expr> <C-K> &diff ? '[c' : '<C-W>k'  " next difference or window

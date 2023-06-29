@@ -4,15 +4,6 @@
 export HISTFILESIZE=1000000000
 export HISTSIZE=1000000
 
-# "merge" history from all active terms
-export PROMPT_COMMAND='history -a' # equivalent to shopt -s histappend ?
-
-export PROMPT_COMMAND="setUserColor ; ${PROMPT_COMMAND}" # merge history of all the terminals
-
-function historyHistogram {
-    history|awk '{print $2}'|awk 'BEGIN {FS="|"} {print $1}'|sort|uniq -c|sort -nr
-}
-
 #### Terminal title
 function printTermTitle {
     if [ -z "${TERM_TITLE}" ] ; then
@@ -32,11 +23,21 @@ function setTermTitle {
 }
 
 setTermTitle  # term title will be current basedir (at anytime).
-export PROMPT_COMMAND="printTermTitle ; ${PROMPT_COMMAND}" # set term title
+# setTermTitle "$(pwd -P | xargs basename)"  # term title will be current basedir (at term creation)
 
 #### history
 # export PROMPT_COMMAND="history -a ; ${PROMPT_COMMAND}" # merge history of all the terminals
-#setTermTitle "$(pwd -P | xargs basename)"  # term title will be current basedir (at term creation)
+# "merge" history from all active terms
+if ! grep history <<< "${PROMPT_COMMAND}" ; then
+    export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ;} history -a"  # equivalent to shopt -s histappend ?
+    export PROMPT_COMMAND="setUserColor ; ${PROMPT_COMMAND}"  # merge history of all the terminals
+    export PROMPT_COMMAND="printTermTitle ; ${PROMPT_COMMAND}"  # set term title
+fi
+
+function historyHistogram {
+    history|awk '{print $2}'|awk 'BEGIN {FS="|"} {print $1}'|sort|uniq -c|sort -nr
+}
+
 
 #### PROMPT colors and text
 function setUserColor {
@@ -57,6 +58,20 @@ function setUserColor {
 setUserColor
 export PS1='\[\033['${!USER}'m\]\[\033[1m\]\u@\h:`if [[ $? = 0 ]]; then echo \[\033[32m\]; else echo \[\033[31m\]; fi`\w$\[\033[0m\] '
 
+#### bat integration
+export MANPAGER="sh -c 'col -bx | batcat -l man -p'"
+alias bat='batcat'
+
+#### Enable programmable completion features
+if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
+  source /etc/bash_completion
+fi
+
+#### Autojump <3
+if [ -f /usr/share/autojump/autojump.bash ]; then
+  source /usr/share/autojump/autojump.bash
+fi
+
 #### misc
 export PATH=${PATH}:~/.local/bin # for python modules installed from pip3
 
@@ -64,3 +79,15 @@ export LESS=-R
 alias open='xdg-open'
 
 source /etc/profile.d/undistract-me.sh
+
+function cheat() {
+    curl "cheat.sh/${1}" | less
+}
+
+function lol() {
+    exec 1> >(lolcat)
+} 
+
+function unlol() {
+    exec 1> /dev/stdout
+}

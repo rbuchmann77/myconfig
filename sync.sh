@@ -13,6 +13,7 @@ function bootstrap {
     fi
 
     sudo apt-get install -y meld subversion undistract-me
+    sudo snap install mdl  # markdownlint
 }
 
 function setup {
